@@ -6,6 +6,7 @@ using namespace std;
 
 const double Pi = acos(-1);
 
+
 struct Struct //Определение типа чисел
 {
     char type;
@@ -19,13 +20,16 @@ double Sin(double x) {
 double Cos(double x) {
     return (round(cos(x) * 10000000) / 10000000);
 }
-
 double Ctg(double x) {
     double a = cos(x);
     double b = Sin(x);
     return (a / b);
 }
+
 bool Math(stack <Struct>& Stack_ch, stack <Struct>& Stack_opp, Struct& item) {
+    if (Stack_ch.size() == 0) {
+        return false;
+    }
 
     double a, b, c;
     a = Stack_ch.top().value;
@@ -144,40 +148,53 @@ int Rang(char ch) {//Приоритет
     if (ch == '*' || ch == '/') return 2;
     else return 0;
 }
+
+void Error_(stack <Struct>& Stack_ch, stack <Struct>& Stack_op) {
+    while (Stack_ch.size() != 0) {
+        Stack_ch.pop();
+    }
+    while (Stack_op.size() != 0) {
+        Stack_op.pop();
+    }
+    cout << "\nОшибка\n" << endl;
+    string str;
+    getline(cin, str);
+}
+
 int main()
 {
     setlocale(LC_ALL, "rus");
+
     while (true) {
-        system("cls");
+        bool Error = false;
         cout << "   Введите выражение: ";
-        std::string str;
-        getline(cin, str);
-        stringstream sstr{ str };
+
 
         char ch;
         double value;
         bool flag = true;
-        stack<Struct> Stack_ch; 
-        stack<Struct> Stack_op; 
+        stack<Struct> Stack_ch;
+        stack<Struct> Stack_op;
         Struct item;
         while (true) {
-            ch = sstr.peek();
-            if (ch == '\377')break;
+            ch = cin.peek();
+            if (ch == '\n') break;
             if (ch == ' ') {
-                sstr.ignore();
+                cin.ignore();
                 continue;
             }
-            if (ch == 's' || ch == 'c' || ch == 't' || ch == 'e') { 
+
+            if (ch == 's' || ch == 'c' || ch == 't' || ch == 'e') {
                 char foo[3];
                 for (int i = 0; i < 3; i++) {
-                    ch = sstr.peek();
+                    ch = cin.peek();
                     foo[i] = ch;
-                    sstr.ignore();
+                    cin.ignore();
                 }
-                if (foo[0] == 's' && foo[1] == 'i' && foo[2] == 'n') { 
+                if (foo[0] == 's' && foo[1] == 'i' && foo[2] == 'n') {
                     item.type = 's';
                     item.value = 0;
-                    Stack_op.push(item); 
+                    Stack_op.push(item);
                     continue;
                 }
                 if (foo[0] == 'c' && foo[1] == 'o' && foo[2] == 's') {
@@ -210,36 +227,86 @@ int main()
                 item.value = Pi;
                 Stack_ch.push(item);
                 flag = 0;
-                sstr.ignore();
+                cin.ignore();
                 continue;
             }
+
             if (ch >= '0' && ch <= '9' || ch == '-' && flag == 1) {
-                sstr >> value;
-                item.type = '0';
-                item.value = value;
-                Stack_ch.push(item); 
-                flag = 0;
-                continue;
+                if (ch == '-' && flag == 1) {
+                    cin.ignore();
+                    int check = cin.peek();
+                    if (check == '0') {
+                        item.value = 0;
+                        Stack_ch.push(item);
+                        item.value = -1;
+                        Stack_ch.push(item);
+                        item.type = '*';
+                        Stack_op.push(item);
+
+                        flag = 0;
+                        cin.ignore();
+                        continue;
+                    }else {
+                        cin >> value;
+                        if (value == 0)
+                        {
+                            cin.clear();
+                            ch = cin.peek();
+                            if (ch == '(') {
+                                item.value = -1;
+                                Stack_ch.push(item);
+                                item.type = '*';
+                                Stack_op.push(item);
+                                flag = 1;
+                            }
+                            else {
+                                Error = true;
+                                cin.clear();
+                                break;
+                            }
+                            
+                            
+                        } else {
+                            item.type = '0';
+                            item.value = -value;
+                            Stack_ch.push(item);
+                            flag = 0;
+                            continue;
+                        }
+
+                    }
+                }
+                else {
+                    cin >> value;
+                    item.type = '0';
+                    item.value = value;
+                    Stack_ch.push(item);
+                    flag = 0;
+                    continue;
+                }
+            
+
             }
+
             if (ch == '+' || ch == '-' && flag == 0 || ch == '*' || ch == '/' || ch == '^') {
                 if (Stack_op.size() == 0) {
                     item.type = ch;
                     item.value = 0;
                     Stack_op.push(item);
-                    sstr.ignore();
+                    cin.ignore();
                     continue;
                 }
                 if (Stack_op.size() != 0 && Rang(ch) >
-                    Rang(Stack_op.top().type)) { 
+                    Rang(Stack_op.top().type)) {
                     item.type = ch;
                     item.value = 0;
-                    Stack_op.push(item); 
-                    sstr.ignore();
+                    Stack_op.push(item);
+                    cin.ignore();
                     continue;
                 }
                 if (Stack_op.size() != 0 && Rang(ch) <= Rang(Stack_op.top().type)) {
-                    if (Math(Stack_ch, Stack_op, item) == false) { 
-                        system("pause");
+                    if (Math(Stack_ch, Stack_op, item) == false) {
+                       
                         return 0;
                     }
                     continue;
@@ -248,38 +315,64 @@ int main()
             if (ch == '(') {
                 item.type = ch;
                 item.value = 0;
-                Stack_op.push(item); 
-                sstr.ignore();
-                continue;
-            }
-            if (ch == ')') { 
+                Stack_op.push(item);
+                cin.ignore();
+                flag = 1;
+
+            }else if  (ch == ')') {
+                if (Stack_op.size() == 0) {
+                    Error = true;
+                    break;
+                }
                 while (Stack_op.top().type != '(') {
-                    if (Math(Stack_ch, Stack_op, item) == false) { 
-                        system("pause");
+                    if (Math(Stack_ch, Stack_op, item) == false) {
                         return 0;
                     }
-                    else continue; 
+                    else continue;
                 }
                 Stack_op.pop();
-                sstr.ignore();
+                cin.ignore();
                 continue;
             }
             else {
                 cout << "\nНеверно введено выражение!\n";
-                system("pause");
                 return 0;
             }
         }
-        while (Stack_op.size() !=
-            0) {
-            if (Math(Stack_ch, Stack_op, item) == false) {
-                system("pause");
-                return 0;
-            }
-            else continue; 
+
+        if (Stack_ch.size() == 0 and Stack_op.size() == 1) {
+            Error = true;
         }
-        cout << "   Ответ: " << Stack_ch.top().value << endl;
-        system("pause");
-    }
-    return 0;
+
+        if (Stack_ch.size() == 0 and Stack_op.size() != 0) {
+            Error = true;
+        }
+        if (!Error) {
+            int flag = 0;
+            while (Stack_op.size() !=
+                0) {
+                if (Math(Stack_ch, Stack_op, item) == false) {
+                    cout << endl;
+                    string str;
+                    getline(std::cin, str);
+                    flag = 1;
+                    break;
+                }
+
+            }
+            if (Stack_ch.size() == 1 and !flag) {
+                cout << Stack_ch.top().value << " " << endl;
+                Stack_ch.pop();
+                cin.ignore();
+            }
+            else if (Stack_ch.size() != 1 and !flag) {
+               Error_(Stack_ch, Stack_op);
+            }
+            
+        }
+        else {
+            Error_(Stack_ch, Stack_op);
+        }
+       }
+       
 }
