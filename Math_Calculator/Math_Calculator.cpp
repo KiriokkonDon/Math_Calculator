@@ -343,6 +343,9 @@ int main()
         if (Stack_ch.size() == 0 and Stack_op.size() == 1) {
             Error = true;
         }
+        if ( Stack_ch.size() + 1 > Stack_ch.size() or !Stack_op.size() and !Stack_ch.top().value) {
+            Error = true;
+        }
 
         if (Stack_ch.size() == 0 and Stack_op.size() != 0) {
             Error = true;
