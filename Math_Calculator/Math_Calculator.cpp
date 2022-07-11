@@ -340,17 +340,17 @@ int main()
             }
         }
 
-        if (Stack_ch.size() == 0 and Stack_op.size() == 1) {
+        if (Stack_ch.size() == 0 && Stack_op.size() == 1) {
             Error = true;
         }
        
 
-        if (Stack_ch.size() == 0 and Stack_op.size() != 0) {
+        if (Stack_ch.size() == 0 && Stack_op.size() != 0) {
             Error = true;
         }
 
         if ( !Error) {
-            if (Stack_ch.top().value == 0 and !Stack_op.size()) {
+            if (Stack_ch.top().value == 0 && !Stack_op.size()) {
                 cout << Stack_ch.top().value << endl;
                 cin.ignore();
                 while (Stack_ch.size() != 0) {
@@ -363,7 +363,7 @@ int main()
             }
         }
 
-        if (Stack_op.size() + 1 > Stack_ch.size() or !Stack_op.size() and !Stack_ch.top().value) {
+        if (Stack_op.size() + 1 > Stack_ch.size() || !Stack_op.size() && !Stack_ch.top().value) {
             Error = true;
         }
         if (!Error) {
@@ -379,12 +379,12 @@ int main()
                 }
 
             }
-            if (Stack_ch.size() == 1 and !flag) {
+            if (Stack_ch.size() == 1 && !flag) {
                 cout << Stack_ch.top().value << " " << endl;
                 Stack_ch.pop();
                 cin.ignore();
             }
-            else if (Stack_ch.size() != 1 and !flag) {
+            else if (Stack_ch.size() != 1 && !flag) {
                Error_(Stack_ch, Stack_op);
             }
             
