@@ -348,6 +348,24 @@ int main()
         if (Stack_ch.size() == 0 and Stack_op.size() != 0) {
             Error = true;
         }
+
+        if ( !Error) {
+            if (Stack_ch.top().value == 0 and !Stack_op.size()) {
+                cout << Stack_ch.top().value << endl;
+                cin.ignore();
+                while (Stack_ch.size() != 0) {
+                    Stack_ch.pop();
+                }
+                while (Stack_op.size() != 0) {
+                    Stack_op.pop();
+                }
+                continue;
+            }
+        }
+
+        if (Stack_op.size() + 1 > Stack_ch.size() or !Stack_op.size() and !Stack_ch.top().value) {
+            Error = true;
+        }
         if (!Error) {
             int flag = 0;
             while (Stack_op.size() !=
