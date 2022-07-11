@@ -354,7 +354,7 @@ int main()
                 if (Math(Stack_ch, Stack_op, item) == false) {
                     cout << endl;
                     string str;
-                    getline(std::cin, str);
+                    getline(cin, str);
                     flag = 1;
                     break;
                 }
