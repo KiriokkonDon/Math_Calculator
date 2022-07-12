@@ -341,14 +341,12 @@ int main()
             }
         }
 
-        if (Stack_ch.size() == 0 && Stack_op.size() == 1) {
+        if (Stack_ch.size() == 0 && (Stack_op.size() == 1|| Stack_op.size() != 0 )) {
             Error = true;
         }
        
 
-        if (Stack_ch.size() == 0 && Stack_op.size() != 0) {
-            Error = true;
-        }
+        
 
         if (!Error && !No_Enter) {
             if (Stack_ch.top().value == 0 && Stack_op.size()==0) {
