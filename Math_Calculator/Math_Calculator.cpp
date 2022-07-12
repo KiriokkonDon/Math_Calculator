@@ -167,6 +167,7 @@ int main()
 
     while (true) {
         bool Error = false;
+        bool No_Enter = false;
         cout << "   Введите выражение: ";
 
 
@@ -178,7 +179,14 @@ int main()
         Struct item;
         while (true) {
             ch = cin.peek();
-            if (ch == '\n') break;
+            if (ch == '\n') {
+                if(Stack_ch.size() == 0 && Stack_op.size() == 0) {
+                    Error = true;
+                    No_Enter = true;
+                }
+                break;
+            }
+
             if (ch == ' ') {
                 cin.ignore();
                 continue;
@@ -289,28 +297,21 @@ int main()
             }
 
             if (ch == '+' || ch == '-' && flag == 0 || ch == '*' || ch == '/' || ch == '^') {
-                if (Stack_op.size() == 0) {
+                if (Stack_op.size() == 0 || Rang(ch) > Rang(Stack_op.top().type)) {
                     item.type = ch;
                     item.value = 0;
                     Stack_op.push(item);
                     cin.ignore();
                     continue;
                 }
-                if (Stack_op.size() != 0 && Rang(ch) >
-                    Rang(Stack_op.top().type)) {
-                    item.type = ch;
-                    item.value = 0;
-                    Stack_op.push(item);
-                    cin.ignore();
-                    continue;
+                if (Stack_ch.size() >= 2 ) {
+                    (Math(Stack_ch, Stack_op, item));
                 }
-                if (Stack_op.size() != 0 && Rang(ch) <= Rang(Stack_op.top().type)) {
-                    if (Math(Stack_ch, Stack_op, item) == false) {
-                       
-                        return 0;
-                    }
-                    continue;
+                else {
+                    Error = true;
+                    break;
                 }
+                
             }
             if (ch == '(') {
                 item.type = ch;
@@ -349,7 +350,19 @@ int main()
             Error = true;
         }
 
-       
+        if (!Error && !No_Enter) {
+            if (Stack_ch.top().value == 0 && Stack_op.size()==0) {
+                cout << Stack_ch.top().value << endl;
+                cin.ignore();
+                while (Stack_ch.size() != 0) {
+                    Stack_ch.pop();
+                }
+                while (Stack_op.size() != 0) {
+                    Stack_op.pop();
+                }
+                continue;
+            }
+        }
 
         if (Stack_op.size() + 1 > Stack_ch.size() || !Stack_op.size() && !Stack_ch.top().value) {
             Error = true;
